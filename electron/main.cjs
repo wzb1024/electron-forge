@@ -2,6 +2,13 @@ const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
 function createWindow() {
+  console.log('当前工作目录:', process.cwd())
+  console.log('__dirname:', __dirname)
+  console.log('环境变量:', process.env)
+
+  // 添加调试信息
+  console.log('VITE_DEV_SERVER_URL:', process.env.VITE_DEV_SERVER_URL)
+
   // 创建浏览器窗口
   const win = new BrowserWindow({
     width: 1200,
@@ -15,18 +22,27 @@ function createWindow() {
   })
 
   // 加载应用
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(process.env.VITE_DEV_SERVER_URL)
-    // 开发环境下打开开发者工具
+  const rendererURL = process.env.VITE_DEV_SERVER_URL || process.env.ELECTRON_RENDERER_URL
+  if (rendererURL) {
+    console.log('正在加载开发服务器URL:', rendererURL)
+    win.loadURL(rendererURL)
     win.webContents.openDevTools()
   } else {
-    // 生产环境
-    win.loadFile(path.join(__dirname, '../renderer/index.html'))
+    console.log('未找到开发服务器URL，尝试加载本地文件')
+    const indexPath = path.join(__dirname, '../renderer/index.html')
+    console.log('尝试加载路径:', indexPath)
+    win.loadFile(indexPath)
   }
 
   // 监听加载错误
   win.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
-    console.error(`Failed to load: ${errorCode} - ${errorDescription}`)
+    console.log('加载失败:', errorCode, errorDescription)
+    // 如果加载失败，尝试重新加载
+    if (process.env.VITE_DEV_SERVER_URL) {
+      setTimeout(() => {
+        win.loadURL(process.env.VITE_DEV_SERVER_URL)
+      }, 1000)
+    }
   })
 
   // 监听渲染进程错误

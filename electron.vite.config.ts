@@ -5,6 +5,7 @@ import { resolve } from 'path'
 export default defineConfig({
   main: {
     build: {
+      outDir: 'out/main',
       lib: {
         entry: 'electron/main.cjs'
       },
@@ -15,6 +16,7 @@ export default defineConfig({
   },
   preload: {
     build: {
+      outDir: 'out/preload',
       lib: {
         entry: 'electron/preload.cjs'
       },
@@ -25,10 +27,15 @@ export default defineConfig({
   },
   renderer: {
     root: '.',
+    base: './',
+    server: {
+      port: 5173
+    },
     build: {
+      outDir: 'out/renderer',
       rollupOptions: {
         input: {
-          index: 'index.html'
+          index: resolve(__dirname, 'index.html')
         }
       }
     },
