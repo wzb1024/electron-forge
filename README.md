@@ -2,6 +2,8 @@
 
 A modern desktop application template that combines the power of Electron with Vue 3. Build beautiful cross-platform apps with ease.
 
+[English](./README.md) | [中文说明](./README.zh-CN.md)
+
 ## Features
 
 - ⚡️ [Vite](https://vitejs.dev/) - Lightning fast frontend tooling
